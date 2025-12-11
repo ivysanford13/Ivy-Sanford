@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tens</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Sidebar + Game CSS -->
+    <style>
+        /* ==== Card Game Styles (scoped to .game-root) ==== */
+        body {
+            background-color: blanchedalmond;
+        }
+
+        :root {
+            --felt-green: #005060;
+            --felt-green-dark: #005060;
+            --table-border: #000000;
+            --card-bg: #fff4ea;
+            --card-border: #d5d2c8;
+            --card-radius: 10px;
+            --card-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+            --text-main: #ffffff;
+            --ui-panel-bg: rgba(0, 0, 0, 0.5);
+            --button-bg: rgba(255, 255, 255, 0.1);
+            --button-bg-hover: rgba(255, 255, 255, 0.18);
+            --button-border: rgba(255, 255, 255, 0.2);
+            --button-text: #ffffff;
+            --hint-glow: rgba(255, 215, 0, 0.8);
+            --flip-duration: 0.33s;
+            --card-back-navy: #2c3d67;
+            --card-back-red: #630c17;
+            --card-back-slate: #3d3f41;
+            --card-back-color: var(--card-back-navy);
+            --card-width: 110px;
+            /* make cards bigger */
+            --card-height: calc(var(--card-width) * 1.4);
+            /* perfect proportion */
+        }
+
+        * {
+            position: static;
+        }
+
+        .game-root {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+        }
+
+        .game-root .table {
+            width: 100%;
+            max-width: 960px;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.04), transparent 60%),
+                radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.25), transparent 55%),
+                var(--felt-green);
+            border-radius: 18px;
+            border: 3px solid var(--table-border);
+            padding: 0.75rem;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-root header.table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            color: var(--text-main);
+        }
+
+        .game-root .game-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+
+        .game-root .status-text {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .game-root .top-panel {
+            display: flex;
+            gap: 0.75rem;
+            align-items: stretch;
+            flex-wrap: wrap;
+            color: var(--text-main);
+        }
+
+        .game-root .left-panel,
+        .game-root .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            flex: 1;
+            min-width: 200px;
+            background-color: #005060;
+        }
+
+        .game-root .deck-current-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: #005060
+        }
+
+        .game-root .deck-area,
+        .game-root .current-card-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .game-root .area-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .game-root .deck-pile,
+        .game-root .card-slot,
+        .game-root .current-card-slot {
+            width: 80px;
+            height: 120px;
+            border-radius: var(--card-radius);
+            border: 2px solid rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .game-root .deck-pile {
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+        }
+
+        .game-root .deck-pile.disabled {
+            opacity: 0.3;
+            cursor: default;
+            box-shadow: none;
+        }
+
+        .game-root .deck-count {
+            font-size: 0.8rem;
+            margin-top: 0.15rem;
+            opacity: 0.9;
+        }
+
+        .game-root .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            background-color: #005060
+        }
+
+        .game-root button {
+            border-radius: 999px;
+            border: 1px solid var(--button-border);
+            background: var(--button-bg);
+            color: var(--button-text);
+            padding: 0.3rem 0.7rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            backdrop-filter: blur(4px);
+            transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+        }
+
+        .game-root button:hover:not(:disabled) {
+            background: var(--button-bg-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+        }
+
+        .game-root button:disabled {
+            opacity: 0.4;
+            cursor: default;
+            box-shadow: none;
+        }
+
+        .game-root .board {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            grid-auto-rows: auto;
+            gap: 0.6rem;
+            padding: 0.4rem 0.3rem 0.6rem;
+            border-radius: 12px;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.08), transparent 65%);
+        }
+
+        .game-root .pile {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px;
+        }
+
+        .game-root .card-slot {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.25);
+            border-style: dashed;
+            border-color: rgba(250, 249, 246, 0.3);
+        }
+
+        .game-root .card-slot.empty {
+            opacity: 0.7;
+        }
+
+        .game-root .card-slot.has-card {
+            border-style: solid;
+            border-color: rgba(0, 0, 0, 0.45);
+            background: transparent;
+        }
+
+        .game-root .card {
+            width: 100%;
+            height: 100%;
+            border-radius: var(--card-radius);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            box-shadow: var(--card-shadow);
+            position: relative;
+            padding: 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transform-style: preserve-3d;
+            transform-origin: center;
+            transition: transform var(--flip-duration) ease;
+            backface-visibility: hidden;
+        }
+
+        .game-root .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .game-root .card-face,
+        .game-root .card-back {
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 4px;
+        }
+
+        .game-root .card-face {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+        }
+
+        .game-root .card-back {
+            background: var(--card-back-color);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transform: rotateY(180deg);
+            overflow: hidden;
+        }
+
+        .game-root .card-back-pattern {
+            flex: 1;
+            border-radius: calc(var(--card-radius) - 3px);
+            margin: 2px;
+            background-image:
+                linear-gradient(45deg, rgba(255, 255, 255, 0.23) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.23) 50%, rgba(255, 255, 255, 0.23) 75%, transparent 75%, transparent);
+            background-size: 10px 10px;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+        }
+
+        .game-root .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .game-root .rank-top,
+        .game-root .rank-bottom {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .game-root .rank-bottom {
+            transform: rotate(180deg);
+            align-self: flex-end;
+        }
+
+        .game-root .suit-symbol {
+            font-size: 1.4rem;
+            line-height: 1;
+            text-align: center;
+        }
+
+        .game-root .suit-red {
+            color: #c62828;
+        }
+
+        .game-root .suit-black {
+            color: #222222;
+        }
+
+        .game-root .hint-target {
+            box-shadow: 0 0 0 3px var(--hint-glow);
+        }
+
+        .game-root .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            padding: 0.25rem 0.4rem;
+            opacity: 0.9;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            color: var(--text-main);
+        }
+
+        .game-root .status-group {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .game-root .badge {
+            padding: 0.12rem 0.45rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        /* MODALS – make them always cover the screen when active */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            /* above cards + game-over banner */
+        }
+
+        .modal-backdrop.active {
+            display: flex;
+        }
+
+        .game-root .game-modal {
+            background: rgba(10, 20, 10, 0.95);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 0.9rem;
+            max-width: 420px;
+            width: 100%;
+            max-height: 80vh;
+            overflow: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            color: #f3f3f3;
+            font-size: 0.85rem;
+        }
+
+        .game-root .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-root .modal-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .game-root .modal-close {
+            border-radius: 999px;
+            border: none;
+            background: rgba(255, 255, 255, 0.12);
+            color: #f5f5f5;
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        /* Make all game-over modal text black */
+        .game-root .game-over-panel,
+        .game-root .game-over-panel * {
+            color: #000 !important;
+        }
+
+        .game-root .game-over-panel button {
+            background: #fff !important;
+            border: 1px solid #333 !important;
+        }
+
+        .game-root .modal-section {
+            margin-bottom: 0.7rem;
+        }
+
+        .game-root .modal-section h3 {
+            margin: 0 0 0.25rem;
+            font-size: 0.86rem;
+        }
+
+        .game-root .modal-section p {
+            margin: 0.1rem 0;
+            line-height: 1.35;
+        }
+
+        .game-root .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .game-root .settings-row label {
+            font-size: 0.8rem;
+        }
+
+        .game-root .settings-row select,
+        .game-root .settings-row input[type="checkbox"] {
+            font-size: 0.8rem;
+        }
+
+        .game-root .small-button {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+        }
+
+        .game-root .game-over-banner {
+            position: absolute;
+            inset: 0;
+            backdrop-filter: blur(2px);
+            background: rgba(0, 0, 0, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .game-root .game-over-banner.active {
+            display: flex;
+        }
+
+        .game-root .game-over-panel {
+            background: rgba(10, 20, 10, 0.96);
+            border-radius: 16px;
+            padding: 0.9rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 18px 42px rgba(0, 0, 0, 0.7);
+        }
+
+        .game-root .game-over-panel h2 {
+            margin: 0 0 0.3rem;
+            font-size: 1.1rem;
+        }
+
+        .game-root .game-over-panel p {
+            font-size: 0.85rem;
+            margin: 0.1rem 0 0.5rem;
+        }
+
+        .game-root .game-over-actions {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.4rem;
+        }
+
+        /* Make the deck look like a patterned card back */
+        .game-root .deck-pile {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--card-radius);
+            border: 2px solid rgba(0, 0, 0, 0.4);
+            background: var(--card-back-color);
+            /* navy/red/slate */
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Inner pattern on the card back */
+        .game-root .deck-pile::before {
+            content: "";
+            position: absolute;
+            inset: 4px;
+            border-radius: calc(var(--card-radius) - 3px);
+            background-image:
+                linear-gradient(45deg,
+                    rgba(255, 255, 255, 0.23) 25%,
+                    transparent 25%,
+                    transparent 50%,
+                    rgba(255, 255, 255, 0.23) 50%,
+                    rgba(255, 255, 255, 0.23) 75%,
+                    transparent 75%,
+                    transparent);
+            background-size: 10px 10px;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+        }
+
+        /* Hide the whole current-card panel */
+        .game-root .current-card-area {
+            display: none;
+        }
+
+        .game-root .deck-pile,
+        .game-root .card-slot,
+        .game-root .current-card-slot {
+            width: var(--card-width);
+            height: var(--card-height);
+        }
+
+
+        .game-root .rank-top,
+        .game-root .rank-bottom {
+            font-size: 1.1rem;
+        }
+
+        .game-root .suit-symbol {
+            font-size: 2rem;
+        }
+
+
+        /* Responsive for game area */
+        @media (max-width: 800px) {
+
+            .game-root .deck-pile,
+            .game-root .card-slot,
+            .game-root .current-card-slot {
+                width: 70px;
+                height: 100px;
+            }
+
+            .game-root .board {
+                gap: 0.4rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .game-root .table {
+                padding: 0.6rem;
+                border-radius: 0;
+            }
+
+            .game-root .board {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 420px) {
+            .game-root .board {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Simple Home button -->
+    <a class="btn btn-outline-secondary m-3" href="index.html">
+        ⬅ Home
+    </a>
+
+    <div class="p-4">
+
+        <div id="app">
+            <div class="game-root">
+                <div class="table" id="table">
+                    <header class="table-header">
+                        <div class="game-title">tens</div>
+                        <div class="status-text" id="statusText">Use every card or get stuck trying.</div>
+                    </header>
+
+                    <div class="top-panel">
+                        <div class="left-panel">
+                            <div class="deck-current-row">
+                                <div class="deck-area">
+                                    <div class="deck-pile" id="deckPile" title="Draw next card"></div>
+                                    <div class="deck-count" id="deckCount">Deck: 52</div>
+                                </div>
+                                <div class="current-card-area">
+                                    <div class="current-card-slot" id="currentCardSlot"></div>
+                                    <div class="area-label">Current Card</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="right-panel">
+                            <div class="controls">
+                                <button id="newGameButton">New Game</button>
+                                <button id="undoButton" disabled>Undo</button>
+                                <button id="hintButton" disabled>Hint</button>
+                                <button id="statsButton">Stats</button>
+                                <button id="rulesButton">Rules</button>
+                                <button id="settingsButton">Settings</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <main class="board" id="board"></main>
+
+                    <footer class="status-bar">
+                        <div class="status-group">
+                            <span class="badge" id="movesBadge">Moves: 0</span>
+                            <span class="badge" id="gamesBadge">Games: 0</span>
+                            <span class="badge" id="winsBadge">Wins: 0</span>
+                        </div>
+                        <div class="status-group">
+                            <span id="messageText">Choose a pile to place or cover.</span>
+                        </div>
+                    </footer>
+
+                    <!-- Game Over Banner -->
+                    <div class="game-over-banner" id="gameOverBanner">
+                        <div class="game-over-panel">
+                            <h2 id="gameOverTitle">Game Over</h2>
+                            <p id="gameOverDetail"></p>
+                            <div class="game-over-actions">
+                                <button id="gameOverNewGameButton">New Game</button>
+                                <button id="gameOverUndoButton">Undo</button>
+                                <button id="gameOverCloseButton" class="small-button">Close</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Modal -->
+                    <div class="modal-backdrop" id="settingsModalBackdrop">
+                        <div class="game-modal">
+                            <div class="modal-header">
+                                <div class="modal-title">Settings</div>
+                                <button class="modal-close" data-modal-close="settingsModalBackdrop">&times;</button>
+                            </div>
+                            <div class="modal-section">
+                                <h3>Preferences</h3>
+                                <div class="settings-row">
+                                    <label for="soundToggle">Sound</label>
+                                    <input type="checkbox" id="soundToggle" />
+                                </div>
+                                <div class="settings-row">
+                                    <label for="speedSelect">Animation Speed</label>
+                                    <select id="speedSelect">
+                                        <option value="normal">Normal</option>
+                                        <option value="fast">Fast</option>
+                                    </select>
+                                </div>
+                                <div class="settings-row">
+                                    <label for="feltToggle">Felt Texture</label>
+                                    <input type="checkbox" id="feltToggle" checked />
+                                </div>
+                                <div class="settings-row">
+                                    <label for="cardBackSelect">Card Back Color</label>
+                                    <select id="cardBackSelect">
+                                        <option value="navy">Navy</option>
+                                        <option value="red">Red</option>
+                                        <option value="slate">Slate</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-section">
+                                <h3>Data</h3>
+                                <button id="resetProgressButton" class="small-button">Reset Stats &amp;
+                                    Settings</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Modal -->
+                    <div class="modal-backdrop" id="statsModalBackdrop">
+                        <div class="game-modal">
+                            <div class="modal-header">
+                                <div class="modal-title">Stats</div>
+                                <button class="modal-close" data-modal-close="statsModalBackdrop">&times;</button>
+                            </div>
+                            <div class="modal-section">
+                                <p id="statsContent">No games played yet.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rules Modal -->
+                    <div class="modal-backdrop" id="rulesModalBackdrop">
+                        <div class="game-modal">
+                            <div class="modal-header">
+                                <div class="modal-title">Rules</div>
+                                <button class="modal-close" data-modal-close="rulesModalBackdrop">&times;</button>
+                            </div>
+                            <div class="modal-section">
+                                <h3>Goal</h3>
+                                <p>Use all 52 cards without running out of legal moves.</p>
+                            </div>
+                            <div class="modal-section">
+                                <h3>Board</h3>
+                                <p>There are 10 piles on the table. You can stack cards, but only the top card of each
+                                    pile is visible.</p>
+                            </div>
+                            <div class="modal-section">
+                                <h3>Turns</h3>
+                                <p>Cards are dealt one at a time. For each card, you must either:</p>
+                                <ul>
+                                    <li>Place it on an empty pile, or</li>
+                                    <li>Cover a legal card on one of the piles.</li>
+                                </ul>
+                                <p>There is no discard. If you cannot place or cover, you lose.</p>
+                            </div>
+                            <div class="modal-section">
+                                <h3>Covering Rules</h3>
+                                <ul>
+                                    <li>Ace = 1. Number cards are their number. 10 = 10.</li>
+                                    <li>If two visible number cards add to 10 (1+9, 2+8, 3+7, 4+6, 5+5), those two cards
+                                        become coverable and can later be covered by any card.</li>
+                                    <li>You may always cover a 10.</li>
+                                    <li>Face cards (J, Q, K) may not be covered until all four of that rank have been
+                                        revealed on the table at the same time at least once. After that, any of that
+                                        rank may be covered.</li>
+                                </ul>
+                            </div>
+                            <div class="modal-section">
+                                <h3>Winning &amp; Losing</h3>
+                                <ul>
+                                    <li>You win if the deck is empty and all piles are empty.</li>
+                                    <li>You lose if you have a card in hand and no empty piles and no legal covers.</li>
+                                </ul>
+                            </div>
+                            <div class="modal-section">
+                                <h3>Helpers</h3>
+                                <ul>
+                                    <li><strong>Undo</strong> lets you go back through previous states.</li>
+                                    <li><strong>Hint</strong> highlights piles where the current card can be played.
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Card Game JS -->
+    <script>
+        const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+        const suits = ["♠", "♥", "♦", "♣"];
+
+        function getCardValue(rank) {
+            if (rank === "A") return 1;
+            if (rank === "J" || rank === "Q" || rank === "K") return null;
+            return parseInt(rank, 10);
+        }
+
+        function isFaceCard(rank) {
+            return rank === "J" || rank === "Q" || rank === "K";
+        }
+
+        function createDeck() {
+            const deck = [];
+            for (const suit of suits) {
+                for (const rank of ranks) {
+                    deck.push({
+                        rank,
+                        suit,
+                        unlockedNumeric: false // becomes true once this card has been in a 10-pair
+                    });
+                }
+            }
+            return deck;
+        }
+
+        function shuffleInPlace(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        const boardElement = document.getElementById("board");
+        const deckPileElement = document.getElementById("deckPile");
+        const deckCountElement = document.getElementById("deckCount");
+        const currentCardSlotElement = document.getElementById("currentCardSlot");
+        const statusTextElement = document.getElementById("statusText");
+        const messageTextElement = document.getElementById("messageText");
+        const movesBadgeElement = document.getElementById("movesBadge");
+        const gamesBadgeElement = document.getElementById("gamesBadge");
+        const winsBadgeElement = document.getElementById("winsBadge");
+
+        const newGameButton = document.getElementById("newGameButton");
+        const undoButton = document.getElementById("undoButton");
+        const hintButton = document.getElementById("hintButton");
+        const statsButton = document.getElementById("statsButton");
+        const rulesButton = document.getElementById("rulesButton");
+        const settingsButton = document.getElementById("settingsButton");
+
+        const gameOverBanner = document.getElementById("gameOverBanner");
+        const gameOverTitle = document.getElementById("gameOverTitle");
+        const gameOverDetail = document.getElementById("gameOverDetail");
+        const gameOverNewGameButton = document.getElementById("gameOverNewGameButton");
+        const gameOverUndoButton = document.getElementById("gameOverUndoButton");
+        const gameOverCloseButton = document.getElementById("gameOverCloseButton");
+
+        const settingsModalBackdrop = document.getElementById("settingsModalBackdrop");
+        const statsModalBackdrop = document.getElementById("statsModalBackdrop");
+        const rulesModalBackdrop = document.getElementById("rulesModalBackdrop");
+
+        const soundToggle = document.getElementById("soundToggle");
+        const speedSelect = document.getElementById("speedSelect");
+        const feltToggle = document.getElementById("feltToggle");
+        const cardBackSelect = document.getElementById("cardBackSelect");
+        const resetProgressButton = document.getElementById("resetProgressButton");
+        const statsContentElement = document.getElementById("statsContent");
+
+        let deck = [];
+        let deckIndex = 0;
+        let piles = [];
+        let hintMode = false;
+        let currentCard = null;
+        let movesMade = 0;
+        let gameOver = false;
+        let unlockedFaceRanks = new Set();
+        let undoStack = [];
+        let faceVisibleCounts = { J: 0, Q: 0, K: 0 };
+
+        const defaultSettings = {
+            soundOn: false,
+            animationSpeed: "normal",
+            feltTexture: true,
+            cardBackColor: "navy",
+        };
+
+        const defaultStats = {
+            gamesPlayed: 0,
+            wins: 0,
+            losses: 0,
+            bestMovesForWin: null,
+            longestWinStreak: 0,
+            currentWinStreak: 0,
+        };
+
+        function safeClone(value) {
+            if (window.structuredClone) {
+                return window.structuredClone(value);
+            }
+            return JSON.parse(JSON.stringify(value));
+        }
+
+        function loadFromStorage(key, fallback) {
+            try {
+                const raw = localStorage.getItem(key);
+                if (!raw) return safeClone(fallback);
+                return Object.assign(safeClone(fallback), JSON.parse(raw));
+            } catch {
+                return safeClone(fallback);
+            }
+        }
+
+        function saveToStorage(key, value) {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+            } catch { }
+        }
+
+        let settings = loadFromStorage("tenspot_settings", defaultSettings);
+        let stats = loadFromStorage("tenspot_stats", defaultStats);
+
+        function applySettingsToUI() {
+            soundToggle.checked = settings.soundOn;
+            speedSelect.value = settings.animationSpeed;
+            feltToggle.checked = settings.feltTexture;
+            cardBackSelect.value = settings.cardBackColor;
+            updateAnimationSpeed();
+            updateFeltTexture();
+            updateCardBackColor();
+        }
+
+        function updateAnimationSpeed() {
+            const root = document.documentElement;
+            if (settings.animationSpeed === "fast") {
+                root.style.setProperty("--flip-duration", "0.18s");
+            } else {
+                root.style.setProperty("--flip-duration", "0.33s");
+            }
+        }
+
+        function updateFeltTexture() {
+            const table = document.getElementById("table");
+            if (settings.feltTexture) {
+                table.style.background =
+                    "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.04), transparent 60%)," +
+                    "radial-gradient(circle at 80% 80%, rgba(0,0,0,0.25), transparent 55%)," +
+                    "var(--felt-green)";
+            } else {
+                table.style.background = "var(--felt-green)";
+            }
+        }
+
+        function updateCardBackColor() {
+            const root = document.documentElement;
+            let colorVar = "--card-back-navy";
+            if (settings.cardBackColor === "red") colorVar = "--card-back-red";
+            if (settings.cardBackColor === "slate") colorVar = "--card-back-slate";
+            root.style.setProperty("--card-back-color", `var(${colorVar})`);
+        }
+
+        let audioContext = null;
+        function playClickTone() {
+            if (!settings.soundOn) return;
+            try {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                const ctx = audioContext;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "triangle";
+                osc.frequency.value = 440;
+                gain.gain.value = 0.05;
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.08);
+            } catch { }
+        }
+
+        function createSnapshot() {
+            return {
+                deck: safeClone(deck),
+                deckIndex,
+                piles: safeClone(piles),
+                currentCard: currentCard ? { ...currentCard } : null,
+                movesMade,
+                gameOver,
+                unlockedFaceRanks: Array.from(unlockedFaceRanks),
+                faceVisibleCounts: { ...faceVisibleCounts },
+            };
+        }
+
+        function pushUndoState() {
+            undoStack.push(createSnapshot());
+            undoButton.disabled = undoStack.length === 0;
+        }
+
+        function restoreSnapshot(snapshot) {
+            deck = safeClone(snapshot.deck);
+            deckIndex = snapshot.deckIndex;
+            piles = safeClone(snapshot.piles);
+            currentCard = snapshot.currentCard ? { ...snapshot.currentCard } : null;
+            movesMade = snapshot.movesMade;
+            gameOver = snapshot.gameOver;
+            unlockedFaceRanks = new Set(snapshot.unlockedFaceRanks);
+            faceVisibleCounts = { ...snapshot.faceVisibleCounts };
+            undoButton.disabled = undoStack.length === 0;
+            hintButton.disabled = !currentCard || gameOver;
+            hideGameOverBanner();
+            render();
+        }
+
+        function handleUndo() {
+            if (undoStack.length === 0) return;
+            const snapshot = undoStack.pop();
+            restoreSnapshot(snapshot);
+        }
+
+        function getTopCardOfPile(index) {
+            const pile = piles[index];
+            if (!pile || pile.length === 0) return null;
+            return pile[pile.length - 1];
+        }
+
+        function getLegalMovesForCurrentCard() {
+            const coverablePiles = [];
+            const emptyPiles = [];
+
+            if (!currentCard || gameOver) {
+                return { coverablePiles, emptyPiles };
+            }
+
+            for (let i = 0; i < piles.length; i++) {
+                const topCard = getTopCardOfPile(i);
+
+                if (!topCard) {
+                    emptyPiles.push(i);
+                    continue;
+                }
+
+                const rank = topCard.rank;
+
+                if (isFaceCard(rank)) {
+                    if (unlockedFaceRanks.has(rank)) {
+                        coverablePiles.push(i);
+                    }
+                    continue;
+                }
+
+                if (rank === "10" || topCard.unlockedNumeric) {
+                    coverablePiles.push(i);
+                }
+            }
+
+            return { coverablePiles, emptyPiles };
+        }
+
+        function updateUnlockedFaceRanks() {
+            ["J", "Q", "K"].forEach((rank) => {
+                if (faceVisibleCounts[rank] >= 4) {
+                    unlockedFaceRanks.add(rank);
+                }
+            });
+        }
+
+        function recomputeVisibleFaceCounts() {
+            faceVisibleCounts = { J: 0, Q: 0, K: 0 };
+            for (const pile of piles) {
+                if (pile.length === 0) continue;
+                const topCard = pile[pile.length - 1];
+                if (isFaceCard(topCard.rank)) {
+                    faceVisibleCounts[topCard.rank]++;
+                }
+            }
+            updateUnlockedFaceRanks();
+        }
+
+        // NEW: unlock numeric cards that are part of 10-pairs, limited by counts
+        function updateNumericPairsAndUnlock() {
+            const positionsByValue = {};
+            for (let v = 1; v <= 9; v++) {
+                positionsByValue[v] = [];
+            }
+
+            for (let i = 0; i < piles.length; i++) {
+                const top = getTopCardOfPile(i);
+                if (!top) continue;
+
+                const val = getCardValue(top.rank);
+                if (val !== null && top.rank !== "10" && !top.unlockedNumeric) {
+                    positionsByValue[val].push(top);
+                }
+            }
+
+            function unlockPair(cardA, cardB) {
+                cardA.unlockedNumeric = true;
+                cardB.unlockedNumeric = true;
+            }
+
+            const valuePairs = [
+                [1, 9],
+                [2, 8],
+                [3, 7],
+                [4, 6]
+            ];
+
+            for (const [a, b] of valuePairs) {
+                const aCards = positionsByValue[a];
+                const bCards = positionsByValue[b];
+                const pairCount = Math.min(aCards.length, bCards.length);
+
+                for (let k = 0; k < pairCount; k++) {
+                    unlockPair(aCards[k], bCards[k]);
+                }
+            }
+
+            const fives = positionsByValue[5];
+            const fivePairs = Math.floor(fives.length / 2);
+            for (let k = 0; k < fivePairs; k++) {
+                const c1 = fives[2 * k];
+                const c2 = fives[2 * k + 1];
+                unlockPair(c1, c2);
+            }
+        }
+
+        function createCardElement(card, showFront = true) {
+            const cardElement = document.createElement("div");
+            cardElement.className = "card";
+            if (!showFront) {
+                cardElement.classList.add("flipped");
+            }
+
+            const inner = document.createElement("div");
+            inner.className = "card-inner";
+
+            const face = document.createElement("div");
+            face.className = "card-face";
+
+            const back = document.createElement("div");
+            back.className = "card-back";
+            const backPattern = document.createElement("div");
+            backPattern.className = "card-back-pattern";
+            back.appendChild(backPattern);
+
+            const rankTop = document.createElement("div");
+            rankTop.className = "rank-top";
+            const rankBottom = document.createElement("div");
+            rankBottom.className = "rank-bottom";
+            const suitSymbol = document.createElement("div");
+            suitSymbol.className = "suit-symbol";
+
+            rankTop.textContent = card.rank;
+            rankBottom.textContent = card.rank;
+            suitSymbol.textContent = card.suit;
+
+            const isRedSuit = card.suit === "♥" || card.suit === "♦";
+            rankTop.classList.add(isRedSuit ? "suit-red" : "suit-black");
+            rankBottom.classList.add(isRedSuit ? "suit-red" : "suit-black");
+            suitSymbol.classList.add(isRedSuit ? "suit-red" : "suit-black");
+
+            face.appendChild(rankTop);
+            face.appendChild(suitSymbol);
+            face.appendChild(rankBottom);
+
+            inner.appendChild(face);
+            inner.appendChild(back);
+            cardElement.appendChild(inner);
+
+            return cardElement;
+        }
+
+        function renderBoard() {
+            boardElement.innerHTML = "";
+            const { coverablePiles, emptyPiles } = getLegalMovesForCurrentCard();
+
+            for (let i = 0; i < piles.length; i++) {
+                const pileWrapper = document.createElement("div");
+                pileWrapper.className = "pile";
+                pileWrapper.dataset.index = i.toString();
+
+                const slot = document.createElement("div");
+                slot.className = "card-slot";
+                const pile = piles[i];
+
+                if (pile.length === 0) {
+                    slot.classList.add("empty");
+                } else {
+                    slot.classList.remove("empty");
+                    slot.classList.add("has-card");
+                    const topCard = pile[pile.length - 1];
+                    const cardElement = createCardElement(topCard, true);
+                    slot.appendChild(cardElement);
+                }
+
+                if (hintMode && currentCard && (coverablePiles.includes(i) || emptyPiles.includes(i))) {
+                    slot.classList.add("hint-target");
+                }
+
+                pileWrapper.appendChild(slot);
+                pileWrapper.addEventListener("click", () => handlePileClick(i));
+                boardElement.appendChild(pileWrapper);
+            }
+        }
+
+        function renderDeckAndCurrent() {
+            // Cards still not on the table:
+            //   - cards left in the deck
+            //   - plus the hidden currentCard (if there is one)
+            const remainingInDeck = deck.length - deckIndex;
+            const remaining = remainingInDeck + (currentCard ? 1 : 0);
+
+            deckCountElement.textContent = `Deck: ${remaining}`;
+
+            // Visually show a back card only if there are unused cards left
+            deckPileElement.innerHTML = "";
+            if (remaining > 0) {
+                const backCard = createCardElement({ rank: "", suit: "" }, false);
+                deckPileElement.appendChild(backCard);
+                deckPileElement.classList.remove("disabled");
+            } else {
+                deckPileElement.classList.add("disabled");
+            }
+
+            // We’re hiding the current-card UI, so this just stays empty
+            currentCardSlotElement.innerHTML = "";
+        }
+
+
+        function renderStatus() {
+            movesBadgeElement.textContent = `Moves: ${movesMade}`;
+            gamesBadgeElement.textContent = `Games: ${stats.gamesPlayed}`;
+            winsBadgeElement.textContent = `Wins: ${stats.wins}`;
+            undoButton.disabled = undoStack.length === 0;
+            hintButton.disabled = !currentCard || gameOver;
+        }
+
+        function render() {
+            renderBoard();
+            renderDeckAndCurrent();
+            renderStatus();
+        }
+
+        function updateFaceVisibilityOnPileChange() {
+            recomputeVisibleFaceCounts();
+            updateNumericPairsAndUnlock();
+        }
+
+        function startNewGame() {
+            deck = createDeck();
+            shuffleInPlace(deck);
+            deckIndex = 0;
+            piles = Array.from({ length: 10 }, () => []);
+            currentCard = null;
+            movesMade = 0;
+            gameOver = false;
+            unlockedFaceRanks = new Set();
+            faceVisibleCounts = { J: 0, Q: 0, K: 0 };
+            undoStack = [];
+            hintMode = false;
+            undoButton.disabled = true;
+            hintButton.disabled = true;
+            statusTextElement.textContent = "New game started.";
+            messageTextElement.textContent = "Choose a pile to place or cover.";
+            hideGameOverBanner();
+            stats.gamesPlayed += 1;
+            saveToStorage("tenspot_stats", stats);
+            dealNextCard();
+            render();
+        }
+
+        function endGame(win) {
+            gameOver = true;
+            if (win) {
+                statusTextElement.textContent = "You win!";
+                messageTextElement.textContent = "You cleared the deck!!";
+                stats.wins += 1;
+                stats.currentWinStreak += 1;
+                if (stats.currentWinStreak > stats.longestWinStreak) {
+                    stats.longestWinStreak = stats.currentWinStreak;
+                }
+                if (stats.bestMovesForWin === null || movesMade < stats.bestMovesForWin) {
+                    stats.bestMovesForWin = movesMade;
+                }
+                gameOverTitle.textContent = "You Win!";
+                gameOverDetail.textContent = `You cleared the deck in ${movesMade} moves.`;
+            } else {
+                statusTextElement.textContent = "No legal moves.";
+                messageTextElement.textContent = "You lose this round.";
+                stats.losses += 1;
+                stats.currentWinStreak = 0;
+                gameOverTitle.textContent = "No Moves Left";
+                gameOverDetail.textContent = "You had a card in hand with no empty piles and no legal covers.";
+            }
+            saveToStorage("tenspot_stats", stats);
+            showGameOverBanner();
+            renderStatus();
+        }
+
+        function checkForWin() {
+    const remainingInDeck = deck.length - deckIndex;
+    const holdingCard = !!currentCard;
+
+    // You win when:
+    // - there are no unused cards left in the deck, AND
+    // - you are not holding a card in hand (you placed the last one)
+    if (remainingInDeck === 0 && !holdingCard) {
+        endGame(true);
+        return true;
+    }
+
+    return false;
+}
+
+
+        function dealNextCard() {
+            if (gameOver) return;
+            if (currentCard) return;
+
+            const remaining = deck.length - deckIndex;
+            if (remaining <= 0) {
+                messageTextElement.textContent = "No cards left in the deck.";
+                return;
+            }
+
+            pushUndoState();
+            currentCard = { ...deck[deckIndex] };
+            deckIndex += 1;
+
+            hintMode = false;
+            playClickTone();
+            messageTextElement.textContent = "Choose a pile to place or cover.";
+
+            render();
+
+            const { coverablePiles, emptyPiles } = getLegalMovesForCurrentCard();
+            if (coverablePiles.length === 0 && emptyPiles.length === 0) {
+                endGame(false);
+            }
+        }
+
+        function handleDeckClick() {
+            dealNextCard();
+        }
+
+        function handlePileClick(pileIndex) {
+            if (gameOver) return;
+            if (!currentCard) {
+                messageTextElement.textContent = "No cards left to play.";
+                return;
+            }
+
+
+            const { coverablePiles, emptyPiles } = getLegalMovesForCurrentCard();
+            const pile = piles[pileIndex];
+            const isEmpty = pile.length === 0;
+
+            if (isEmpty) {
+                if (!emptyPiles.includes(pileIndex)) {
+                    messageTextElement.textContent = "You cannot place here.";
+                    return;
+                }
+                pushUndoState();
+                piles[pileIndex].push({ ...currentCard });
+                currentCard = null;
+                movesMade += 1;
+                updateFaceVisibilityOnPileChange();
+                playClickTone();
+                messageTextElement.textContent = "Card placed.";
+                hintButton.disabled = true;
+                hintMode = false;
+                render();
+                if (!gameOver) {
+                    dealNextCard();
+                }
+                checkForWin();
+            } else {
+                if (!coverablePiles.includes(pileIndex)) {
+                    messageTextElement.textContent = "You cannot cover that card.";
+                    return;
+                }
+                pushUndoState();
+                piles[pileIndex].push({ ...currentCard });
+                currentCard = null;
+                movesMade += 1;
+                updateFaceVisibilityOnPileChange();
+                playClickTone();
+                messageTextElement.textContent = "Card covered.";
+                hintButton.disabled = true;
+                hintMode = false;
+                render();
+                if (!gameOver) {
+                    dealNextCard();
+                }
+                checkForWin();
+            }
+        }
+
+        function handleHint() {
+            if (!currentCard || gameOver) return;
+            hintMode = true;
+            const { coverablePiles, emptyPiles } = getLegalMovesForCurrentCard();
+            if (coverablePiles.length === 0 && emptyPiles.length === 0) {
+                messageTextElement.textContent = "No legal moves for this card.";
+            } else if (coverablePiles.length === 0) {
+                messageTextElement.textContent = "No covers; place in an empty pile.";
+            } else {
+                messageTextElement.textContent = "Highlighted piles show legal moves.";
+            }
+            render();
+        }
+
+        function openModal(backdropId) {
+            const backdrop = document.getElementById(backdropId);
+            if (backdrop) {
+                backdrop.classList.add("active");
+            }
+        }
+
+        function closeModal(backdropId) {
+            const backdrop = document.getElementById(backdropId);
+            if (backdrop) {
+                backdrop.classList.remove("active");
+            }
+        }
+
+        function updateStatsModal() {
+            const s = stats;
+            const lines = [];
+            lines.push(`Games played: ${s.gamesPlayed}`);
+            lines.push(`Wins: ${s.wins}`);
+            lines.push(`Losses: ${s.losses}`);
+            lines.push(`Current win streak: ${s.currentWinStreak}`);
+            lines.push(`Longest win streak: ${s.longestWinStreak}`);
+            if (s.bestMovesForWin !== null) {
+                lines.push(`Best (fewest moves) win: ${s.bestMovesForWin}`);
+            }
+            statsContentElement.innerHTML = lines.join("<br>");
+        }
+
+        function showGameOverBanner() {
+            gameOverBanner.classList.add("active");
+        }
+
+        function hideGameOverBanner() {
+            gameOverBanner.classList.remove("active");
+        }
+
+        // deckPileElement.addEventListener("click", handleDeckClick);
+        newGameButton.addEventListener("click", () => {
+            startNewGame();
+        });
+        undoButton.addEventListener("click", handleUndo);
+        hintButton.addEventListener("click", handleHint);
+        statsButton.addEventListener("click", () => {
+            updateStatsModal();
+            openModal("statsModalBackdrop");
+        });
+        rulesButton.addEventListener("click", () => {
+            openModal("rulesModalBackdrop");
+        });
+        settingsButton.addEventListener("click", () => {
+            applySettingsToUI();
+            openModal("settingsModalBackdrop");
+        });
+
+        document.querySelectorAll(".modal-close").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const id = btn.getAttribute("data-modal-close");
+                if (id) closeModal(id);
+            });
+        });
+
+        settingsModalBackdrop.addEventListener("click", (e) => {
+            if (e.target === settingsModalBackdrop) {
+                closeModal("settingsModalBackdrop");
+            }
+        });
+        statsModalBackdrop.addEventListener("click", (e) => {
+            if (e.target === statsModalBackdrop) {
+                closeModal("statsModalBackdrop");
+            }
+        });
+        rulesModalBackdrop.addEventListener("click", (e) => {
+            if (e.target === rulesModalBackdrop) {
+                closeModal("rulesModalBackdrop");
+            }
+        });
+
+        soundToggle.addEventListener("change", () => {
+            settings.soundOn = soundToggle.checked;
+            saveToStorage("tenspot_settings", settings);
+        });
+        speedSelect.addEventListener("change", () => {
+            settings.animationSpeed = speedSelect.value;
+            saveToStorage("tenspot_settings", settings);
+            updateAnimationSpeed();
+        });
+        feltToggle.addEventListener("change", () => {
+            settings.feltTexture = feltToggle.checked;
+            saveToStorage("tenspot_settings", settings);
+            updateFeltTexture();
+        });
+        cardBackSelect.addEventListener("change", () => {
+            settings.cardBackColor = cardBackSelect.value;
+            saveToStorage("tenspot_settings", settings);
+            updateCardBackColor();
+            render();
+        });
+
+        resetProgressButton.addEventListener("click", () => {
+            if (!confirm("Reset stats and settings? This cannot be undone.")) return;
+            settings = safeClone(defaultSettings);
+            stats = safeClone(defaultStats);
+            saveToStorage("tenspot_settings", settings);
+            saveToStorage("tenspot_stats", stats);
+            applySettingsToUI();
+            renderStatus();
+            updateStatsModal();
+            messageTextElement.textContent = "Stats and settings reset.";
+        });
+
+        gameOverNewGameButton.addEventListener("click", () => {
+            hideGameOverBanner();
+            startNewGame();
+        });
+        gameOverUndoButton.addEventListener("click", () => {
+            hideGameOverBanner();
+            handleUndo();
+        });
+        gameOverCloseButton.addEventListener("click", () => {
+            hideGameOverBanner();
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "u" || e.key === "U") {
+                handleUndo();
+            } else if (e.key === "h" || e.key === "H") {
+                handleHint();
+            } else if (e.key === "n" || e.key === "N") {
+                startNewGame();
+            }
+        });
+
+        applySettingsToUI();
+        renderStatus();
+        startNewGame();
+    </script>
+
+</body>
+
+</html>

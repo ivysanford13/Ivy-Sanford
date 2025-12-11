@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ivy Sanford | Portfolio</title>
+
+    <!-- Google Fonts: similar vibe to your screenshot -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Main professional styles for this site -->
+    <!-- If you change this filename, also change it in resume.html -->
+    <link rel="stylesheet" href="css/pro.css">
+</head>
+<body>
+    <div class="page">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="profile">
+                <!-- Replace this src with your own headshot image file -->
+                <img class="profile-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgaafn1fEiU-ACYAUYM8n7DzIOYqTQA3OULg&s" height="180" alt="Image of Ivy Sanford"> 
+                <!-- ^ Make sure this image exists to avoid a broken image.
+                     You can change the path or filename as needed. -->
+            </div>
+
+            <nav class="sidebar-nav">
+                <!-- ABOUT = scroll to hero/about section on this page -->
+                <a href="#about" class="nav-link nav-link-active">About</a>
+
+                <!-- RESUME = go to resume.html -->
+                <a href="resume.html" class="nav-link">Résumé</a>
+
+                <!-- CONTACT = scroll down on this page -->
+                <a href="#contact" class="nav-link">Contact</a>
+
+                <!-- SCRATCH = goes to your scratch page (you will build this) -->
+                <a href="scratch.html" class="nav-link">Scratch</a>
+
+                <!-- TENS = goes to your Tens web app page (you will build this) -->
+                <a href="webapp.html" class="nav-link">Tens (Web App)</a>
+            </nav>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="content">
+
+            <!-- Top navigation bar (for small screens) -->
+            <header class="topbar">
+                <div class="topbar-inner">
+                    <div class="topbar-name">
+                        <!-- Edit your name here -->
+                        <span class="topbar-title">Ivy Sanford</span>
+                        <span class="topbar-subtitle">Student • Data & Business • Languages</span>
+                    </div>
+                    <!-- Simple menu icon for mobile; not interactive, just visual -->
+                    <div class="menu-icon" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+
+                <nav class="topbar-nav">
+                    <a href="#about" class="topbar-link topbar-link-active">About</a>
+                    <a href="resume.html" class="topbar-link">Résumé</a>
+                    <a href="#contact" class="topbar-link">Contact</a>
+                    <a href="scratch.html" class="topbar-link">Scratch</a>
+                    <a href="webapp.html" class="topbar-link">Tens</a>
+                </nav>
+            </header>
+
+            <!-- HERO / ABOUT SECTION -->
+            <section id="about" class="section hero">
+                <!-- Edit this headline to match what you want recruiters/class to see -->
+                <h1 class="hero-title">Ivy Sanford</h1>
+                <p class="hero-subtitle">
+                    <!-- ABOUT TEXT: write 2–3 sentences about yourself here -->
+                    I am a student with interests in business, data, and global supply chains.
+                    I enjoy using technology and language to solve real-world problems and
+                    communicate clearly across cultures.
+                </p>
+
+                <div class="hero-actions">
+                    <!-- Button to resume page -->
+                    <a href="resume.html" class="btn-primary">View Résumé</a>
+
+                    <!-- Optional secondary button; change URL or remove if you don’t want it -->
+                    <a href="webapp.html" class="btn-secondary">View Tens Web App</a>
+                </div>
+            </section>
+
+            <!-- “RESUME” PREVIEW / PROJECTS / SKILLS (HOME PAGE) -->
+            <section class="section">
+                <h2 class="section-title">Highlights</h2>
+                <p class="section-intro">
+                    <!-- Edit these blurbs to match what you actually want to highlight. -->
+                    Here are a few areas I’m focused on right now. For a detailed view of my
+                    experience and education, visit the résumé page.
+                </p>
+
+                <div class="card-grid">
+                    <!-- Card 1: Education -->
+                    <article class="card">
+                        <h3 class="card-title">Education</h3>
+                        <p class="card-text">
+                            <!-- Short teaser about education; full details go in resume.html -->
+                            Add a brief summary of your major, university, and any key coursework here.
+                        </p>
+                    </article>
+
+                    <!-- Card 2: Experience / Projects -->
+                    <article class="card">
+                        <h3 class="card-title">Experience & Projects</h3>
+                        <p class="card-text">
+                            Mention internships, jobs, or class projects that demonstrate your skills.
+                        </p>
+                    </article>
+
+                    <!-- Card 3: Skills -->
+                    <article class="card">
+                        <h3 class="card-title">Skills</h3>
+                        <p class="card-text">
+                            List your core tools and strengths (e.g., Excel, Python, SQL, leadership, languages).
+                        </p>
+                    </article>
+                </div>
+            </section>
+
+            <!-- CONTACT SECTION -->
+            <section id="contact" class="section section-contact">
+                <h2 class="section-title">Contact</h2>
+                <p class="section-intro">
+                    <!-- Edit this depending on how you want people to reach you.
+                         You can safely remove email or LinkedIn if you prefer. -->
+                    I’m always happy to connect about projects, internships, and collaborations.
+                </p>
+
+                <div class="contact-actions">
+                    <!-- Update these to your real info when you’re ready. -->
+                    <a class="btn-primary" href="mailto:your.email@byu.edu">
+                        Email Me
+                    </a>
+                    <a class="btn-secondary" href="https://www.linkedin.com">
+                        View LinkedIn
+                    </a>
+                </div>
+
+                <!-- Simple “icons” using just text so there are no broken image links -->
+                <div class="contact-icons">
+                    <!-- You can replace these with real icons later if you’d like. -->
+                    <span class="contact-tag">LinkedIn</span>
+                    <span class="contact-tag">GitHub</span>
+                    <span class="contact-tag">Portfolio</span>
+                </div>
+            </section>
+
+            <footer class="site-footer">
+                <p>&copy; <span id="year"></span> Ivy Sanford. All rights reserved.</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Small script to set the current year in the footer (optional) -->
+    <script>
+        const yearSpan = document.getElementById('year');
+        if (yearSpan) {
+            yearSpan.textContent = new Date().getFullYear();
+        }
+    </script>
+</body>
+</html>
