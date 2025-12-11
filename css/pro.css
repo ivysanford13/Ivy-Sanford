@@ -3,7 +3,7 @@
    ================================ */
 
 :root {
-    --color-page-bg: blanchedalmond;      /* Overall page background color */
+    --color-page-bg: rgb(255, 249, 239);      /* Overall page background color */
     --color-sidebar-bg: #04457d;   /* Sidebar background and topbar accent */
     --color-sidebar-text: #b6d2ff; /* Sidebar link text (inactive) */
     --color-sidebar-text-active: #ffffff; /* Sidebar active/hover link text */
