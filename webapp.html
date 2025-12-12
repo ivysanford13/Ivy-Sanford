@@ -13,14 +13,14 @@
     <style>
         /* ==== Card Game Styles (scoped to .game-root) ==== */
         body {
-            background-color: blanchedalmond;
+            background-color: rgb(255, 247, 236);
         }
 
         :root {
-            --felt-green: #005060;
-            --felt-green-dark: #005060;
+            --felt-green: #04457d;
+            --felt-green-dark: #04457d;
             --table-border: #000000;
-            --card-bg: #fff4ea;
+            --card-bg: #fdfbf3;
             --card-border: #d5d2c8;
             --card-radius: 10px;
             --card-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
@@ -30,16 +30,17 @@
             --button-bg-hover: rgba(255, 255, 255, 0.18);
             --button-border: rgba(255, 255, 255, 0.2);
             --button-text: #ffffff;
-            --hint-glow: rgba(255, 215, 0, 0.8);
+            --hint-glow: rgb(247, 225, 98);
             --flip-duration: 0.33s;
-            --card-back-navy: #2c3d67;
-            --card-back-red: #630c17;
-            --card-back-slate: #3d3f41;
-            --card-back-color: var(--card-back-navy);
-            --card-width: 110px;
-            /* make cards bigger */
-            --card-height: calc(var(--card-width) * 1.4);
-            /* perfect proportion */
+            --card-back-pink: #db3477;
+            --card-back-purple: rgb(123, 33, 202);
+            --card-back-blue: rgb(54, 150, 219);
+            --card-back-black: black;
+            --card-back-red: #9d071b;
+            --card-back-slate: #585859;
+            --card-back-color: var(--card-back-red);
+            --card-width: 110px; /* make cards bigger */
+            --card-height: calc(var(--card-width) * 1.4); /* perfect proportion */
         }
 
         * {
@@ -56,10 +57,7 @@
         .game-root .table {
             width: 100%;
             max-width: 960px;
-            background:
-                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.04), transparent 60%),
-                radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.25), transparent 55%),
-                var(--felt-green);
+            background: var(--felt-green);
             border-radius: 18px;
             border: 3px solid var(--table-border);
             padding: 0.75rem;
@@ -105,17 +103,17 @@
             display: flex;
             flex-direction: column;
             gap: 0.4rem;
-            flex: 1;
-            min-width: 200px;
-            background-color: #005060;
+            flex: auto;
+            min-width: 100px;
+            background-color: #04457d;
         }
-
+        
         .game-root .deck-current-row {
             display: flex;
             gap: 0.75rem;
             align-items: center;
             justify-content: flex-start;
-            background-color: #005060
+            background-color: #04457d
         }
 
         .game-root .deck-area,
@@ -160,13 +158,14 @@
             font-size: 0.8rem;
             margin-top: 0.15rem;
             opacity: 0.9;
+            color: white;
         }
 
         .game-root .controls {
             display: flex;
             flex-wrap: wrap;
             gap: 0.4rem;
-            background-color: #005060
+            background-color: #04457d
         }
 
         .game-root button {
@@ -203,7 +202,6 @@
             gap: 0.6rem;
             padding: 0.4rem 0.3rem 0.6rem;
             border-radius: 12px;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.08), transparent 65%);
         }
 
         .game-root .pile {
@@ -246,6 +244,7 @@
             transform-origin: center;
             transition: transform var(--flip-duration) ease;
             backface-visibility: hidden;
+            overflow: hidden; /* keep text inside the card */
         }
 
         .game-root .card-inner {
@@ -295,9 +294,12 @@
             transform: rotateY(180deg);
         }
 
+        /* ===== CARD TEXT SIZES ===== */
+
+        /* Default (desktop / large cards) */
         .game-root .rank-top,
         .game-root .rank-bottom {
-            font-size: 0.75rem;
+            font-size: 1.5rem;
             font-weight: 600;
         }
 
@@ -307,13 +309,13 @@
         }
 
         .game-root .suit-symbol {
-            font-size: 1.4rem;
+            font-size: 2.2rem;
             line-height: 1;
             text-align: center;
         }
 
         .game-root .suit-red {
-            color: #c62828;
+            color: #cb1313;
         }
 
         .game-root .suit-black {
@@ -347,7 +349,8 @@
             padding: 0.12rem 0.45rem;
             border-radius: 999px;
             border: 1px solid rgba(255, 255, 255, 0.22);
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(255, 255, 255, 0.146);
+            color: white;
         }
 
         /* MODALS – make them always cover the screen when active */
@@ -359,7 +362,6 @@
             align-items: center;
             justify-content: center;
             z-index: 999;
-            /* above cards + game-over banner */
         }
 
         .modal-backdrop.active {
@@ -505,7 +507,6 @@
             border-radius: var(--card-radius);
             border: 2px solid rgba(0, 0, 0, 0.4);
             background: var(--card-back-color);
-            /* navy/red/slate */
             box-shadow: var(--card-shadow);
         }
 
@@ -533,6 +534,7 @@
             display: none;
         }
 
+        /* Use CSS variables for actual card size */
         .game-root .deck-pile,
         .game-root .card-slot,
         .game-root .current-card-slot {
@@ -540,19 +542,17 @@
             height: var(--card-height);
         }
 
-
-        .game-root .rank-top,
-        .game-root .rank-bottom {
-            font-size: 1.1rem;
-        }
-
-        .game-root .suit-symbol {
-            font-size: 2rem;
-        }
-
-
-        /* Responsive for game area */
+        /* Responsive for game area + text sizes */
         @media (max-width: 800px) {
+
+            .game-root .rank-top,
+            .game-root .rank-bottom {
+                font-size: 0.85rem;
+            }
+
+            .game-root .suit-symbol {
+                font-size: 1.5rem;
+            }
 
             .game-root .deck-pile,
             .game-root .card-slot,
@@ -575,12 +575,32 @@
             .game-root .board {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
+
+            .game-root .rank-top,
+            .game-root .rank-bottom {
+                font-size: 0.75rem;
+            }
+
+            .game-root .suit-symbol {
+                font-size: 1.3rem;
+            }
         }
 
         @media (max-width: 420px) {
             .game-root .board {
                 grid-template-columns: 1fr;
             }
+        }
+
+        /* Make bottom-right message just plain text, no white box */
+        .game-root #messageText {
+            display: inline;
+            padding: 0;
+            margin: 0;
+            color: white;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
         }
     </style>
 </head>
@@ -681,9 +701,12 @@
                                 <div class="settings-row">
                                     <label for="cardBackSelect">Card Back Color</label>
                                     <select id="cardBackSelect">
-                                        <option value="navy">Navy</option>
+                                        <option value="pink">Pink</option>
                                         <option value="red">Red</option>
                                         <option value="slate">Slate</option>
+                                        <option value="black">Black</option>
+                                        <option value="blue">Blue</option>
+                                        <option value="purple">Purple</option>
                                     </select>
                                 </div>
                             </div>
@@ -809,7 +832,7 @@
 
         const boardElement = document.getElementById("board");
         const deckPileElement = document.getElementById("deckPile");
-        const deckCountElement = document.getElementById("deckCount");
+               const deckCountElement = document.getElementById("deckCount");
         const currentCardSlotElement = document.getElementById("currentCardSlot");
         const statusTextElement = document.getElementById("statusText");
         const messageTextElement = document.getElementById("messageText");
@@ -857,7 +880,7 @@
             soundOn: false,
             animationSpeed: "normal",
             feltTexture: true,
-            cardBackColor: "navy",
+            cardBackColor: "red",
         };
 
         const defaultStats = {
@@ -917,10 +940,7 @@
         function updateFeltTexture() {
             const table = document.getElementById("table");
             if (settings.feltTexture) {
-                table.style.background =
-                    "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.04), transparent 60%)," +
-                    "radial-gradient(circle at 80% 80%, rgba(0,0,0,0.25), transparent 55%)," +
-                    "var(--felt-green)";
+                table.style.background = "var(--felt-green)";
             } else {
                 table.style.background = "var(--felt-green)";
             }
@@ -928,9 +948,13 @@
 
         function updateCardBackColor() {
             const root = document.documentElement;
-            let colorVar = "--card-back-navy";
+            let colorVar = "--card-back-pink";
             if (settings.cardBackColor === "red") colorVar = "--card-back-red";
             if (settings.cardBackColor === "slate") colorVar = "--card-back-slate";
+            if (settings.cardBackColor === "black") colorVar = "--card-back-black";
+            if (settings.cardBackColor === "purple") colorVar = "--card-back-purple";
+            if (settings.cardBackColor === "blue") colorVar = "--card-back-blue";
+
             root.style.setProperty("--card-back-color", `var(${colorVar})`);
         }
 
@@ -1274,19 +1298,19 @@
         }
 
         function checkForWin() {
-    const remainingInDeck = deck.length - deckIndex;
-    const holdingCard = !!currentCard;
+            const remainingInDeck = deck.length - deckIndex;
+            const holdingCard = !!currentCard;
 
-    // You win when:
-    // - there are no unused cards left in the deck, AND
-    // - you are not holding a card in hand (you placed the last one)
-    if (remainingInDeck === 0 && !holdingCard) {
-        endGame(true);
-        return true;
-    }
+            // You win when:
+            // - there are no unused cards left in the deck, AND
+            // - you are not holding a card in hand (you placed the last one)
+            if (remainingInDeck === 0 && !holdingCard) {
+                endGame(true);
+                return true;
+            }
 
-    return false;
-}
+            return false;
+        }
 
 
         function dealNextCard() {
@@ -1299,7 +1323,7 @@
                 return;
             }
 
-            pushUndoState();
+            // NOTE: no pushUndoState() here anymore.
             currentCard = { ...deck[deckIndex] };
             deckIndex += 1;
 
@@ -1326,7 +1350,6 @@
                 return;
             }
 
-
             const { coverablePiles, emptyPiles } = getLegalMovesForCurrentCard();
             const pile = piles[pileIndex];
             const isEmpty = pile.length === 0;
@@ -1336,6 +1359,7 @@
                     messageTextElement.textContent = "You cannot place here.";
                     return;
                 }
+                // snapshot BEFORE we place the card
                 pushUndoState();
                 piles[pileIndex].push({ ...currentCard });
                 currentCard = null;
@@ -1355,6 +1379,7 @@
                     messageTextElement.textContent = "You cannot cover that card.";
                     return;
                 }
+                // snapshot BEFORE we cover the card
                 pushUndoState();
                 piles[pileIndex].push({ ...currentCard });
                 currentCard = null;

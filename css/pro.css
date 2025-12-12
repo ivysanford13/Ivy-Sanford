@@ -130,7 +130,7 @@ body {
     width: 32px;
     height: 32px;
     border-radius: 10px;
-    border: 2px solid #f6d5c5; /* Border color of the icon */
+    border: 2px solid #ffffff; /* Border color of the icon */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -140,7 +140,7 @@ body {
     display: block;
     width: 16px;
     height: 2px;
-    background-color: #f6d5c5; /* Lines inside the menu icon */
+    background-color: #ffffff; /* Lines inside the menu icon */
     margin: 2px 0;
 }
 
