@@ -1,0 +1,246 @@
+/* =========================
+   GLOBAL PAGE STYLES
+   ========================= */
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #04457d;
+    color: #3d3b3b;
+
+    /* SAME font as pro pages */
+    font-family: "Lato", Arial, sans-serif;
+    line-height: 1.6;
+}
+
+/* Headings match pro pages */
+h1, h3, h4 {
+    font-family: "Montserrat", Arial, sans-serif;
+    color: #3e2c1c;
+}
+
+
+h1 {
+    text-align: center;
+    margin-top: 40px;
+    color: rgb(255, 249, 239);
+}
+
+h3 {
+    margin-top: 40px;
+}
+
+/* =========================
+   CONTENT BLOCKS (DIVS)
+   ========================= */
+
+.block {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px 30px;
+}
+
+/* Block 1 */
+.intro-block {
+    background-color:rgb(255, 249, 239);
+}
+
+/* Block 2 */
+.story-block {
+    background-color: rgb(255, 249, 239);
+}
+
+/* Block 3 */
+.media-block {
+    background-color: rgb(255, 249, 239);
+}
+
+/* =========================
+   VIDEO EMBED
+   ========================= */
+
+.video-embed {
+    margin: 20px auto;
+    max-width: 700px;
+}
+
+.video-embed iframe {
+    width: 100%;
+    height: 400px;
+    border: none;
+}
+
+/* ===== Aesthetic Gallery Wall ===== */
+
+.photo-grid {
+  max-width: 950px;
+  margin: 30px auto;
+  padding: 10px;
+
+  /* gallery wall feel */
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 14px;
+}
+
+/* Consistent “print” look */
+.photo-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+  /* clean photo edges */
+  border: 8px solid #04457d;   /* “photo mat” */
+  outline: 1px solid #000000;  /* subtle frame line (not a shadow) */
+  border-radius: 6px;
+
+  /* keeps layout stable */
+  display: block;
+}
+
+/* Hand-placed collage sizing */
+.img-1 { grid-column: 1 / span 5;  grid-row: 1 / span 2; aspect-ratio: 4 / 5; }
+.img-2 { grid-column: 6 / span 4;  grid-row: 1 / span 1; aspect-ratio: 1 / 1; }
+.img-3 { grid-column: 10 / span 3; grid-row: 1 / span 2; aspect-ratio: 3 / 4; }
+
+.img-4 { grid-column: 1 / span 4;  grid-row: 3 / span 2; aspect-ratio: 1 / 1; }
+.img-5 { grid-column: 5 / span 5;  grid-row: 2 / span 3; aspect-ratio: 16 / 10; }
+.img-6 { grid-column: 10 / span 3; grid-row: 3 / span 2; aspect-ratio: 3 / 4; }
+
+/* Mobile: stack nicely */
+@media (max-width: 800px) {
+  .photo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .img-1, .img-2, .img-3, .img-4, .img-5, .img-6 {
+    grid-column: auto;
+    grid-row: auto;
+    aspect-ratio: 4 / 5;
+  }
+}
+
+
+/* =========================
+   LISTS
+   ========================= */
+
+.list-of-places {
+    max-width: 900px;
+    margin: 20px auto;
+}
+
+.list-unordered {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+/* =========================
+   TABLEAU SECTION
+   ========================= */
+
+.section-tableau {
+    max-width: 1000px;
+    margin: 40px auto;
+}
+
+.tableau-heading {
+    text-align: center;
+    margin-top: 60px;
+}
+
+.tableau-embed {
+    margin-top: 20px;
+}
+
+/* =========================
+   NAVIGATION LINKS
+   ========================= */
+
+.nav-block {
+    text-align: center;
+    margin: 60px 0;
+}
+
+.top-button {
+    display: inline-block;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: #3e2c1c;
+    font-weight: bold;
+}
+
+.back-links a {
+    color: #3e2c1c;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+/* =========================
+   PLACES / SCHEDULE SECTION
+   ========================= */
+
+.places-block {
+  background-color: rgb(255, 249, 239);
+}
+
+/* Make the ordered list feel intentional */
+.list-of-places {
+  margin: 18px 0 0;
+  padding-left: 22px; /* keeps the numbers neat */
+}
+
+/* Each location becomes a clean "card line" without shadows */
+.list-of-places > li {
+  margin: 20px 0;
+  padding: 14px 20px;
+  border: 2px solid #04457d;   /* matches your blue theme */
+  border-radius: 10px;
+  font-weight: 700;
+  font-family: "Montserrat", Arial, sans-serif;
+}
+
+/* The nested days list */
+.list-unordered {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  font-family: "Lato", Arial, sans-serif;
+  font-weight: 400;
+}
+
+/* Style the day items */
+.list-unordered li {
+  margin: 4px 0;
+  font-weight: 600;
+  color: #2f2f2f;
+}
+
+/* Optional: make the Tableau heading match the section */
+.tableau-heading {
+  margin-top: 40px;
+  text-align: left;
+  font-family: "Montserrat", Arial, sans-serif;
+  color: #3e2c1c;
+}
+
+.back-links {
+  margin-top: 10px;
+}
+
+.back-links a {
+  color: #3e2c1c;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.dot {
+  margin: 0 10px;
+  color: #3e2c1c;
+}
+
+/* Prevent content from touching screen edges on small devices */
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+}
