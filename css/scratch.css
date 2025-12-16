@@ -90,8 +90,8 @@ h3 {
   object-fit: cover;
 
   /* clean photo edges */
-  border: 8px solid #04457d;   /* “photo mat” */
-  outline: 1px solid #000000;  /* subtle frame line (not a shadow) */
+  border: 12px solid #292929;   /* “photo mat” */
+  /* outline: 1px solid #000000;  subtle frame line (not a shadow) */
   border-radius: 6px;
 
   /* keeps layout stable */
